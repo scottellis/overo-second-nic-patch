@@ -1,0 +1,14 @@
+Tobi-duo u-boot patch for the second lan. 
+
+Tested against Sakoman's omap3-v2009.11.1 u-boot branch using
+a 2.6.34 kernel.
+
+The basic speed issue for the second nic appears to be okay.
+Not a big increase so not urgent.
+
+More testing to do. Something strange happening when both nics are 
+being used simultaneously.
+
+The patch is not for an OE build of u-boot, but for a regular
+u-boot build. 
+

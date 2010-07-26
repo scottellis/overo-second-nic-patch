@@ -1,0 +1,158 @@
+Gumstix
+ETH0 192.168.4.50
+ETH1 192.168.5.50
+
+quad 192.168.4.4
+laptop 192.168.5.7
+
+All tests done with cross-over ethernet cables connecting
+the gumstix overo to the workstations.
+
+
+Before
+
+ETH1 Transmit
+
+root@overo:~# iperf -c 192.168.5.7 -t 60
+------------------------------------------------------------
+Client connecting to 192.168.5.7, TCP port 5001
+TCP window size: 48.4 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.5.50 port 55065 connected with 192.168.5.7 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-60.0 sec    672 MBytes  94.0 Mbits/sec
+
+
+ETH0 Transmit
+
+root@overo:~# iperf -c 192.168.4.4 -t 60
+------------------------------------------------------------
+Client connecting to 192.168.4.4, TCP port 5001
+TCP window size: 29.8 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.4.50 port 45529 connected with 192.168.4.4 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-60.0 sec    674 MBytes  94.2 Mbits/sec
+
+
+
+ETH1/ETH0 Receive
+
+root@overo:~# iperf -s 
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.5.50 port 5001 connected with 192.168.5.7 port 39299
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-60.0 sec    527 MBytes  73.7 Mbits/sec
+[  5] local 192.168.4.50 port 5001 connected with 192.168.4.4 port 52707
+[  5]  0.0-60.0 sec    641 MBytes  89.6 Mbits/sec
+
+
+After GPMC_CS[4] config changes
+
+ETH1 Transmit
+
+root@overo:~# iperf -c 192.168.5.7 -t 60
+------------------------------------------------------------
+Client connecting to 192.168.5.7, TCP port 5001
+TCP window size: 26.1 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.5.50 port 54697 connected with 192.168.5.7 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-60.0 sec    674 MBytes  94.2 Mbits/sec
+
+
+ETH0 Transmit
+
+root@overo:~# iperf -c 192.168.4.4 -t 60
+------------------------------------------------------------
+Client connecting to 192.168.4.4, TCP port 5001
+TCP window size: 37.3 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.4.50 port 51512 connected with 192.168.4.4 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-60.0 sec    674 MBytes  94.2 Mbits/sec
+
+
+ETH1/ETH0 Receive
+
+root@overo:~# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.5.50 port 5001 connected with 192.168.5.7 port 56663
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-60.0 sec    641 MBytes  89.6 Mbits/sec
+[  5] local 192.168.4.50 port 5001 connected with 192.168.4.4 port 60701
+[  5]  0.0-60.0 sec    641 MBytes  89.6 Mbits/sec
+
+
+==============================================================
+
+Simultaneous testing
+
+Simultaneous Receive
+
+root@overo:~# iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.5.50 port 5001 connected with 192.168.5.7 port 59457
+[  5] local 192.168.4.50 port 5001 connected with 192.168.4.4 port 47463
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-300.0 sec  1.60 GBytes  45.8 Mbits/sec
+[  5]  0.0-300.0 sec  1.75 GBytes  50.0 Mbits/sec
+
+
+
+Simultaneous Send (the two ssh sessions to the overo are using 
+the ETH0 connection). When I say simultaneous, there is a very
+short delay as I start one then the other in different terminals.
+
+Run 1 : eth1 first
+Run 2 : eth0 first
+Run 3 : eth1 first
+Run 4 : eth0 first
+
+Here are the results from the other side of the eth0 (quad)
+
+scott@quad:~$ iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.4.4 port 5001 connected with 192.168.4.50 port 48053
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-60.1 sec    297 MBytes  41.5 Mbits/sec
+[  5] local 192.168.4.4 port 5001 connected with 192.168.4.50 port 32892
+[  5]  0.0-60.1 sec    672 MBytes  93.9 Mbits/sec
+[  4] local 192.168.4.4 port 5001 connected with 192.168.4.50 port 41991
+[  4]  0.0-60.0 sec    297 MBytes  41.5 Mbits/sec
+[  5] local 192.168.4.4 port 5001 connected with 192.168.4.50 port 41992
+[  5]  0.0-60.1 sec    672 MBytes  93.9 Mbits/sec
+
+And from the other side of eth1 (laptop)
+
+scott@laptop:~$ iperf -s
+------------------------------------------------------------
+Server listening on TCP port 5001
+TCP window size: 85.3 KByte (default)
+------------------------------------------------------------
+[  4] local 192.168.5.7 port 5001 connected with 192.168.5.50 port 45990
+[ ID] Interval       Transfer     Bandwidth
+[  4]  0.0-60.1 sec    672 MBytes  93.9 Mbits/sec
+[  5] local 192.168.5.7 port 5001 connected with 192.168.5.50 port 54859
+[  5]  0.0-60.1 sec    292 MBytes  40.8 Mbits/sec
+[  4] local 192.168.5.7 port 5001 connected with 192.168.5.50 port 41407
+[  4]  0.0-60.0 sec    672 MBytes  93.9 Mbits/sec
+[  5] local 192.168.5.7 port 5001 connected with 192.168.5.50 port 41410
+[  5]  0.0-60.1 sec    299 MBytes  41.7 Mbits/sec
+
+Don't see this behavior with other dual-nic boxes.
+
+
+
