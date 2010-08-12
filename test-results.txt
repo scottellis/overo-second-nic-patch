@@ -152,7 +152,11 @@ TCP window size: 85.3 KByte (default)
 [  5] local 192.168.5.7 port 5001 connected with 192.168.5.50 port 41410
 [  5]  0.0-60.1 sec    299 MBytes  41.7 Mbits/sec
 
-Don't see this behavior with other dual-nic boxes.
+Don't see this behavior with other dual-nic boxes. I don't think it is
+correct that the speed is dependent on which nic starts transferring
+first. Needs more investigation.
+
+
 
 
 
